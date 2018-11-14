@@ -47,20 +47,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isExpanded = false;
+  Future<List<MarvelHero>> fetchFuture;
+
+  @override
+  void initState() {
+    fetchFuture = fetchHeroes(0);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return new Scaffold(
         appBar: new AppBar(
           title: new Text(widget.title),
         ),
         body: FutureBuilder(
-            future: fetchHeroes(0),
+            future: fetchFuture,
             builder: (BuildContext context, snapshot) {
               if (snapshot.hasError)
                 return new Text('Error: ${snapshot.error}');
@@ -71,7 +74,33 @@ class _MyHomePageState extends State<MyHomePage> {
                       alignment: Alignment.center,
                       child: CircularProgressIndicator());
                 default:
-                  return HeroTile(heroes: snapshot.data);
+                  return Column(
+                    children: <Widget>[
+                      Card(
+                        child: ExpansionPanelList(
+                          expansionCallback: (int index, bool isExpanded) {
+                            setState(() {
+                              this._isExpanded = !isExpanded;
+                            });
+                          },
+                          children: <ExpansionPanel>[
+                            ExpansionPanel(
+                                isExpanded: this._isExpanded,
+                                headerBuilder: (context, isExpand) => Center(
+                                        child: Text(
+                                      "Filters",
+                                      style: Theme.of(context)
+                                          .primaryTextTheme
+                                          .headline,
+                                    )),
+                                body: Text("ASDASDASDASDASda"))
+                          ],
+                        ),
+                        margin: EdgeInsets.all(0.0),
+                      ),
+                      Expanded(child: HeroTile(heroes: snapshot.data))
+                    ],
+                  );
               }
             }));
   }
