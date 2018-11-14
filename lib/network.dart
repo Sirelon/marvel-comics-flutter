@@ -9,12 +9,15 @@ String _baseUrl = "https://gateway.marvel.com:443/v1/public";
 String _publicKey = "8b73058dfc8fd2dcf0a11a355f2b7197";
 String _privateKey = "60191d7af4cfeb521f81845f955f10488ddff082";
 
-Future<List<MarvelHero>> fetchHeroes() async {
+int _limit = 20;
+
+Future<List<MarvelHero>> fetchHeroes(int page) async {
   final ts = DateTime.now().millisecondsSinceEpoch;
   final hash = generateMd5("$ts$_privateKey$_publicKey");
-  final queryParameters = "?ts=$ts&apikey=$_publicKey&hash=$hash";
+  final queryParameters = "ts=$ts&apikey=$_publicKey&hash=$hash";
+  final limitAndOffset = "limit=$_limit&offset=${_limit*page}";
 
-  final response = await http.get("$_baseUrl/characters$queryParameters");
+  final response = await http.get("$_baseUrl/characters?$queryParameters&$limitAndOffset");
 
   if (response.statusCode == 200) {
     // If server returns an OK response, parse the JSON

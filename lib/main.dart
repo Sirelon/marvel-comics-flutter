@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: new Text(widget.title),
         ),
         body: FutureBuilder(
-            future: fetchHeroes(),
+            future: fetchHeroes(0),
             builder: (BuildContext context, snapshot) {
               if (snapshot.hasError)
                 return new Text('Error: ${snapshot.error}');
@@ -98,13 +98,19 @@ class _HeroTileState extends State<HeroTile> {
 
   Widget _buildPage(List<MarvelHero> items) {
     return OrientationBuilder(builder: (context, orientation) {
+      final length = items.length;
+      final isLoading = loadStatus == LoadMoreStatus.LOADING;
       return StaggeredGridView.countBuilder(
           controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-          staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
-          itemCount: items.length,
+          staggeredTileBuilder: (int index) =>
+              StaggeredTile.fit((index == length) ? 3 : 1),
+          itemCount: (isLoading) ? length + 1 : length,
           itemBuilder: (_, int index) {
+            if (index == length) {
+              return LinearProgressIndicator();
+            }
             MarvelHero hero = items[index];
             print(hero.image);
             return Card(
@@ -144,8 +150,10 @@ class _HeroTileState extends State<HeroTile> {
           scrollController.position.maxScrollExtent - scrollController.offset <=
               50) {
         if (loadStatus != null && loadStatus == LoadMoreStatus.STABLE) {
-          loadStatus = LoadMoreStatus.LOADING;
-          fetchHeroes().then((items) {
+          setState(() {
+            loadStatus = LoadMoreStatus.LOADING;
+          });
+          fetchHeroes(currentPage).then((items) {
             print("I AM FETCHED $items");
             currentPage++;
             loadStatus = LoadMoreStatus.STABLE;
