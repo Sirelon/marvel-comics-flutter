@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -69,14 +70,37 @@ class _MyHomePageState extends State<MyHomePage> {
                       alignment: Alignment.center,
                       child: CircularProgressIndicator());
                 default:
-                  return _buildPage(snapshot.data);
+                  return HeroTile(heroes: snapshot.data);
               }
             }));
   }
+}
+
+class HeroTile extends StatefulWidget {
+  final List<MarvelHero> heroes;
+
+  HeroTile({Key key, this.heroes}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _HeroTileState();
+}
+
+class _HeroTileState extends State<HeroTile> {
+  LoadMoreStatus loadStatus = LoadMoreStatus.STABLE;
+  List<MarvelHero> heroes;
+  int currentPage = 1;
+  final ScrollController scrollController = new ScrollController();
+  CancelableOperation movieOperation;
+
+  @override
+  Widget build(BuildContext context) => NotificationListener(
+      child: _buildPage(heroes), onNotification: _onNotification);
 
   Widget _buildPage(List<MarvelHero> items) {
     return OrientationBuilder(builder: (context, orientation) {
       return StaggeredGridView.countBuilder(
+          controller: scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
           crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
           staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
           itemCount: items.length,
@@ -88,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 margin: EdgeInsets.all(8.0),
                 child: Column(
                   children: <Widget>[
-//                    Image.network(hero.image),
                     CachedNetworkImage(
                         errorWidget: Icon(Icons.error),
                         imageUrl: hero.image,
@@ -101,4 +124,40 @@ class _MyHomePageState extends State<MyHomePage> {
           });
     });
   }
+
+  @override
+  void initState() {
+    heroes = widget.heroes;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    if (movieOperation != null) movieOperation.cancel();
+    super.dispose();
+  }
+
+  bool _onNotification(Notification notification) {
+    if (notification is ScrollUpdateNotification) {
+      if (scrollController.position.maxScrollExtent > scrollController.offset &&
+          scrollController.position.maxScrollExtent - scrollController.offset <=
+              50) {
+        if (loadStatus != null && loadStatus == LoadMoreStatus.STABLE) {
+          loadStatus = LoadMoreStatus.LOADING;
+          fetchHeroes().then((items) {
+            print("I AM FETCHED $items");
+            currentPage++;
+            loadStatus = LoadMoreStatus.STABLE;
+            setState(() {
+              heroes.addAll(items);
+            });
+          });
+        }
+      }
+    }
+    return true;
+  }
 }
+
+enum LoadMoreStatus { LOADING, STABLE }
