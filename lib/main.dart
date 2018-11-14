@@ -13,14 +13,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var headLineTheme = TextStyle(
       fontFamily: 'FF',
-      color: Theme.of(context).accentColor,
+      color: Theme.of(context).primaryColor,
       fontWeight: FontWeight.w800,
     );
     return new MaterialApp(
       title: 'Flutter Demo',
       theme: new ThemeData(
           fontFamily: 'Marvel',
-          primarySwatch: Colors.blue,
+          splashColor: Theme.of(context).accentColor,
+          primarySwatch: Colors.red,
           primaryTextTheme: TextTheme(headline: headLineTheme)),
       home: new MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -116,17 +117,23 @@ class _HeroTileState extends State<HeroTile> {
             return Card(
                 elevation: 2.0,
                 margin: EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    CachedNetworkImage(
-                        errorWidget: Icon(Icons.error),
-                        imageUrl: hero.image,
-                        placeholder: CircularProgressIndicator()),
-                    Text(hero.name,
-                        style: Theme.of(context).primaryTextTheme.headline,
-                        textAlign: TextAlign.center),
-                  ],
-                ));
+                child: InkWell(
+                    splashColor: Theme.of(context).accentColor,
+                    onTap: () => _heroChoose(hero),
+                    child: Column(
+                      children: <Widget>[
+                        CachedNetworkImage(
+                            errorWidget: Icon(Icons.error),
+                            imageUrl: hero.image,
+                            placeholder: CircularProgressIndicator()),
+                        Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(hero.name,
+                                style:
+                                    Theme.of(context).primaryTextTheme.headline,
+                                textAlign: TextAlign.center)),
+                      ],
+                    )));
           });
     });
   }
@@ -165,6 +172,10 @@ class _HeroTileState extends State<HeroTile> {
       }
     }
     return true;
+  }
+
+  _heroChoose(MarvelHero hero) {
+    print(hero);
   }
 }
 
