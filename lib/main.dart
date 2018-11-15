@@ -49,10 +49,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool _isExpanded = false;
   Future<List<MarvelHero>> fetchFuture;
+  FilterState initialFilterState;
 
   @override
   void initState() {
     fetchFuture = fetchHeroes(0);
+    initialFilterState =
+        FilterState(order: Order.MODIFIED_ASK, searchQuery: "");
     super.initState();
   }
 
@@ -62,57 +65,141 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: new AppBar(
           title: new Text(widget.title),
         ),
-        body: FutureBuilder(
-            future: fetchFuture,
-            builder: (BuildContext context, snapshot) {
-              if (snapshot.hasError)
-                return new Text('Error: ${snapshot.error}');
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                  return Align(
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator());
-                default:
-                  return Column(
-                    children: <Widget>[
-                      Card(
-                        child: ExpansionPanelList(
-                          expansionCallback: (int index, bool isExpanded) {
-                            setState(() {
-                              this._isExpanded = !isExpanded;
-                            });
-                          },
-                          children: <ExpansionPanel>[
-                            ExpansionPanel(
-                                isExpanded: this._isExpanded,
-                                headerBuilder: (context, isExpand) => Center(
-                                        child: Text(
-                                      "Filters",
-                                      style: Theme.of(context)
-                                          .primaryTextTheme
-                                          .headline,
-                                    )),
-                                body: Text("ASDASDASDASDASda"))
-                          ],
-                        ),
-                        margin: EdgeInsets.all(0.0),
-                      ),
-                      Expanded(child: HeroTile(heroes: snapshot.data))
-                    ],
-                  );
-              }
-            }));
+        body: Column(children: <Widget>[
+          Card(
+            child: ExpansionPanelList(
+              expansionCallback: (int index, bool isExpanded) {
+                setState(() {
+                  this._isExpanded = !isExpanded;
+                });
+              },
+              children: <ExpansionPanel>[
+                ExpansionPanel(
+                    isExpanded: this._isExpanded,
+                    headerBuilder: (context, isExpand) => Center(
+                            child: Text(
+                          "Filters",
+                          style: Theme.of(context).primaryTextTheme.headline,
+                        )),
+                    body: FiltersPanel(
+                      state: initialFilterState,
+                      stateCallback: stateCallback,
+                    ))
+              ],
+            ),
+            margin: EdgeInsets.all(0.0),
+          ),
+          Expanded(
+              child: FutureBuilder(
+                  future: fetchFuture,
+                  builder: (BuildContext context, snapshot) {
+                    if (snapshot.hasError)
+                      return new Text('Error: ${snapshot.error}');
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator());
+                      default:
+                        return HeroTile(
+                            heroes: snapshot.data, filterState: initialFilterState);
+                    }
+                  }))
+        ]));
+  }
+
+  void stateCallback(FilterState filterState) {
+    setState(() {
+      print("HEy i am here");
+      initialFilterState = filterState;
+      fetchFuture =
+          fetchHeroesWithFilters(0, filterState.order, filterState.searchQuery);
+    });
+  }
+}
+
+typedef void FilterStateChanged(FilterState newState);
+
+class FiltersPanel extends StatefulWidget {
+  final FilterState state;
+  final FilterStateChanged stateCallback;
+
+  FiltersPanel({Key key, this.state, this.stateCallback}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() =>
+      _FiltersPanelState(state, stateCallback);
+}
+
+class _FiltersPanelState extends State<FiltersPanel> {
+  Map<Order, String> orderMap;
+  Order choosedOrder;
+  FilterStateChanged stateCallback;
+  FilterState filterState;
+
+  _FiltersPanelState(FilterState state, FilterStateChanged stateCallback) {
+    this.filterState = state;
+    this.stateCallback = stateCallback;
+  }
+
+  @override
+  void initState() {
+    orderMap = {
+      Order.NAME_ASK: "By name ask",
+      Order.NAME_DESC: "By name desc",
+      Order.MODIFIED_ASK: "By modified date ask",
+      Order.MODIFIED_DESC: "By modified date desc"
+    };
+    choosedOrder = filterState.order;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final orderItems = orderMap.entries
+        .map((entry) =>
+            DropdownMenuItem(child: Text(entry.value), value: entry.key))
+        .toList();
+
+    return DropdownButton(
+        items: orderItems,
+        value: choosedOrder,
+        onChanged: (value) {
+          var newState = filterState.copy(newOrder: value);
+          stateCallback(newState);
+          setState(() {
+            choosedOrder = value;
+          });
+        });
+  }
+}
+
+class FilterState {
+  final Order order;
+  final String searchQuery;
+
+  FilterState({this.order, this.searchQuery});
+
+  FilterState copy({Order newOrder, String newSearchQuery}) {
+    return FilterState(
+        order: newOrder ?? order, searchQuery: newSearchQuery ?? searchQuery);
+  }
+
+  @override
+  String toString() {
+    return 'FilterState{order: $order, searchQuery: $searchQuery}';
   }
 }
 
 class HeroTile extends StatefulWidget {
   final List<MarvelHero> heroes;
+  final FilterState filterState;
 
-  HeroTile({Key key, this.heroes}) : super(key: key);
+  HeroTile({Key key, this.heroes, this.filterState}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _HeroTileState();
+  State<StatefulWidget> createState() => _HeroTileState(filterState);
 }
 
 class _HeroTileState extends State<HeroTile> {
@@ -121,6 +208,10 @@ class _HeroTileState extends State<HeroTile> {
   int currentPage = 1;
   final ScrollController scrollController = new ScrollController();
   CancelableOperation movieOperation;
+
+  final FilterState filterState;
+
+  _HeroTileState(this.filterState);
 
   @override
   Widget build(BuildContext context) => NotificationListener(
@@ -189,7 +280,9 @@ class _HeroTileState extends State<HeroTile> {
           setState(() {
             loadStatus = LoadMoreStatus.LOADING;
           });
-          fetchHeroes(currentPage).then((items) {
+          fetchHeroesWithFilters(
+                  currentPage, filterState.order, filterState.searchQuery)
+              .then((items) {
             print("I AM FETCHED $items");
             currentPage++;
             loadStatus = LoadMoreStatus.STABLE;
