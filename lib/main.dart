@@ -16,12 +16,18 @@ class MyApp extends StatelessWidget {
       color: Theme.of(context).primaryColor,
       fontWeight: FontWeight.w800,
     );
+    var titleTheme = TextStyle(
+      fontFamily: 'Marvel',
+      color: Colors.white,
+      fontWeight: FontWeight.normal,
+    );
     return new MaterialApp(
       title: 'Flutter Demo',
       theme: new ThemeData(
           fontFamily: 'Marvel',
           splashColor: Theme.of(context).accentColor,
           primarySwatch: Colors.red,
+          textTheme: TextTheme(title: titleTheme),
           primaryTextTheme: TextTheme(headline: headLineTheme)),
       home: new MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -51,6 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<List<MarvelHero>> fetchFuture;
   FilterState initialFilterState;
 
+  // controls the text label we use as a search bar
+  final TextEditingController _filter = new TextEditingController();
+  String _searchText = "";
+  Icon _searchIcon = new Icon(Icons.search);
+  Widget _appBarTitle = new Text('Search Example');
+
   @override
   void initState() {
     fetchFuture = fetchHeroes(0);
@@ -62,8 +74,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text(widget.title),
+        appBar: AppBar(
+          title: _appBarTitle,
+          actions: <Widget>[
+            IconButton(icon: _searchIcon, onPressed: _searchPressed)
+          ],
         ),
         body: Column(children: <Widget>[
           Card(
@@ -103,7 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: CircularProgressIndicator());
                       default:
                         return HeroTile(
-                            heroes: snapshot.data, filterState: initialFilterState);
+                            heroes: snapshot.data,
+                            filterState: initialFilterState);
                     }
                   }))
         ]));
@@ -115,6 +131,24 @@ class _MyHomePageState extends State<MyHomePage> {
       initialFilterState = filterState;
       fetchFuture =
           fetchHeroesWithFilters(0, filterState.order, filterState.searchQuery);
+    });
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          controller: _filter,
+          style: Theme.of(context).textTheme.title,
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search), hintText: 'Search hero...'),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text(widget.title);
+        _filter.clear();
+      }
     });
   }
 }
