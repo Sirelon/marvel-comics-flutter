@@ -27,8 +27,13 @@ Future<List<MarvelHero>> fetchHeroesWithFilters(int page, Order order,
   final orderByVal = getOrderValueString(order);
   final orderQuery = "orderBy=$orderByVal";
 
+  var url = "$_baseUrl/characters?$queryParameters&$limitAndOffset&$orderQuery";
+  if (search != null && search.isNotEmpty) {
+    final searchQuery = "nameStartsWith=$search";
+    url += "&$searchQuery";
+  }
   final response = await http.get(
-      "$_baseUrl/characters?$queryParameters&$limitAndOffset&$orderQuery");
+      url);
 
   if (response.statusCode == 200) {
     // If server returns an OK response, parse the JSON

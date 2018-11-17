@@ -61,10 +61,16 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _filter = new TextEditingController();
   String _searchText = "";
   Icon _searchIcon = new Icon(Icons.search);
-  Widget _appBarTitle = new Text('Search Example');
+  Widget _appBarTitle;
 
   @override
   void initState() {
+    _appBarTitle = new Text(widget.title);
+    _filter.addListener(() {
+      print("Listner for search input");
+      var state = initialFilterState.copy(newSearchQuery: _filter.value.text);
+      stateCallback(state);
+    });
     fetchFuture = fetchHeroes(0);
     initialFilterState =
         FilterState(order: Order.MODIFIED_ASK, searchQuery: "");
