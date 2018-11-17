@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -59,22 +61,37 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // controls the text label we use as a search bar
   final TextEditingController _filter = new TextEditingController();
-  String _searchText = "";
+  Timer _debounce;
+  String _lastSearchTxt = "";
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle;
 
   @override
   void initState() {
     _appBarTitle = new Text(widget.title);
-    _filter.addListener(() {
-      print("Listner for search input");
-      var state = initialFilterState.copy(newSearchQuery: _filter.value.text);
-      stateCallback(state);
-    });
+    _filter.addListener(_onSearchChanged);
     fetchFuture = fetchHeroes(0);
     initialFilterState =
-        FilterState(order: Order.MODIFIED_ASK, searchQuery: "");
+        FilterState(order: Order.MODIFIED_ASK, searchQuery: _lastSearchTxt);
     super.initState();
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    var searchText = _filter.value.text;
+    if (searchText == _lastSearchTxt) return;
+    _debounce = Timer(const Duration(milliseconds: 700), () {
+      print("Listner for search input $searchText");
+      var state = initialFilterState.copy(newSearchQuery: searchText);
+      stateCallback(state);
+    });
+  }
+
+  @override
+  void dispose() {
+    _filter.removeListener(_onSearchChanged);
+    _filter.dispose();
+    super.dispose();
   }
 
   @override
