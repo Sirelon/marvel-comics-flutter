@@ -28,6 +28,7 @@ Future<List<MarvelHero>> fetchHeroesWithFilters(int page, Order order,
   final orderQuery = "orderBy=$orderByVal";
 
   var url = "$_baseUrl/characters?$queryParameters&$limitAndOffset&$orderQuery";
+  print(url);
   if (search != null && search.isNotEmpty) {
     final searchQuery = "nameStartsWith=$search";
     url += "&$searchQuery";

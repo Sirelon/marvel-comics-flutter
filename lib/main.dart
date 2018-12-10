@@ -4,6 +4,7 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:marvel_heroes/detail.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'network.dart';
 
@@ -62,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // controls the text label we use as a search bar
   final TextEditingController _filter = new TextEditingController();
   Timer _debounce;
-  String _lastSearchTxt = "";
+  String _lastSearchTxt;
   Icon _searchIcon = new Icon(Icons.search);
   Widget _appBarTitle;
 
@@ -72,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _filter.addListener(_onSearchChanged);
     fetchFuture = fetchHeroes(0);
     initialFilterState =
-        FilterState(order: Order.MODIFIED_ASK, searchQuery: _lastSearchTxt);
+        FilterState(order: Order.MODIFIED_ASK, searchQuery: "");
     super.initState();
   }
 
@@ -355,6 +356,8 @@ class _HeroTileState extends State<HeroTile> {
 
   _heroChoose(MarvelHero hero) {
     print(hero);
+    Navigator.push(context,
+        MaterialPageRoute(builder: (c) => HeroDetailPage(hero: hero)));
   }
 }
 
