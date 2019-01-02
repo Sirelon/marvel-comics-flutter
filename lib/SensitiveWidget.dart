@@ -69,7 +69,7 @@ class _SensitiveWidgetState extends State<SensitiveWidget> {
         ..setRotationX(rotX)
         ..rotateY(rotY),
       alignment: FractionalOffset.center,
-      child: Transform.scale(scale: 1.4, child: widget.child),
+      child: Transform.scale(scale: 1.2, child: widget.child),
     );
 
     return transform;

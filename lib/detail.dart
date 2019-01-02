@@ -19,29 +19,59 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
     final bg = CachedNetworkImage(
         errorWidget: Icon(Icons.error),
         imageUrl: hero.image,
+        fit: BoxFit.cover,
         height: double.infinity,
         width: double.infinity,
         alignment: Alignment.center,
         placeholder: CircularProgressIndicator());
 
-    var blackStyle = TextStyle(
-        fontFamily: 'Black',
-        color: Colors.white,
-        fontWeight: FontWeight.normal,
-        letterSpacing: 8.0,
-        fontSize: 36.0);
-
     return new Scaffold(
         appBar: AppBar(title: Text(widget.hero.name)),
         body: new Stack(children: <Widget>[
           SensitiveWidget(child: bg),
-          Center(
-            child: Text(
-              hero.name,
-              style: blackStyle,
-              textAlign: TextAlign.center,
-            ),
-          )
+          SafeArea(child: DetailHeroInfo(hero: hero))
         ]));
+  }
+}
+
+class DetailHeroInfo extends StatelessWidget {
+  const DetailHeroInfo({
+    Key key,
+    @required this.hero,
+  }) : super(key: key);
+
+  final MarvelHero hero;
+
+  @override
+  Widget build(BuildContext context) {
+    var padding = 8.0;
+    var blackStyle = TextStyle(
+        fontFamily: 'Black',
+        color: Colors.white,
+        fontWeight: FontWeight.normal,
+        letterSpacing: padding,
+        fontSize: 42.0);
+
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Text(
+          hero.name,
+          style: blackStyle,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(
+          height: padding,
+        ),
+        Padding(
+            padding: EdgeInsets.all(padding),
+            child: Text(
+              '     ${hero.description}',
+              style: Theme.of(context).primaryTextTheme.title,
+              textAlign: TextAlign.start,
+            )),
+      ],
+    ));
   }
 }
