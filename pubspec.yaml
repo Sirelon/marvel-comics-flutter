@@ -65,3 +65,6 @@ flutter:
     - family: FF
       fonts:
       - asset: fonts/FF.ttf
+    - family: Black
+      fonts:
+      - asset: fonts/blackFont.ttf
