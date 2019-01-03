@@ -21,12 +21,13 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
   Color dominantColor = Colors.white;
   Color invertColor = Colors.white;
   RandomColor _randomColor = RandomColor();
+  PageController pageController = PageController();
 
   @override
   void initState() {
+    super.initState();
     imageProvider = CachedNetworkImageProvider(widget.hero.image);
     _updatePaletteGenerator();
-    super.initState();
   }
 
   Future<void> _updatePaletteGenerator() async {
@@ -40,7 +41,6 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
             255 - dominantColor.red,
             255 - dominantColor.green,
             255 - dominantColor.blue);
-//        dominantColor = _randomColor.randomColor(colorSaturation: ColorSaturation.highSaturation);
         print('Invert color ' + dominantColor.toString());
       });
     });
@@ -77,14 +77,25 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
           brightness: ThemeData.estimateBrightnessForColor(dominantColor),
           iconTheme: iconAppBarTheme,
         ),
-        body: new Stack(children: <Widget>[
-          SensitiveWidget(child: bg),
-          SafeArea(
-              child: DetailHeroInfo(
-            hero: hero,
-            titleColor: invertColor,
-          ))
-        ]));
+        body: PageView(
+          controller: pageController,
+          physics: BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            Stack(children: <Widget>[
+              SensitiveWidget(child: bg),
+              SafeArea(
+                  child: DetailHeroInfo(
+                hero: hero,
+                titleColor: invertColor,
+              ))
+            ]),
+            DetailHeroInfo(
+              hero: hero,
+              titleColor: invertColor,
+            )
+          ],
+        ));
   }
 }
 
@@ -119,9 +130,7 @@ class DetailHeroInfo extends StatelessWidget {
           style: titleStyle,
           textAlign: TextAlign.center,
         ),
-        SizedBox(
-          height: padding,
-        ),
+        SizedBox(height: padding),
         Padding(
             padding: EdgeInsets.all(padding),
             child: Text(
@@ -129,6 +138,11 @@ class DetailHeroInfo extends StatelessWidget {
               style: subTitleStyle,
               textAlign: TextAlign.start,
             )),
+        SizedBox(height: padding),
+        FlatButton.icon(
+            onPressed: () {},
+            icon: Icon(Icons.keyboard_arrow_down),
+            label: Text("Expand"))
       ],
     ));
   }
