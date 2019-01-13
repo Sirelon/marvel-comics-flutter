@@ -16,8 +16,7 @@ class MarvelHero {
       id: json['id'],
       name: json['name'],
       description: json['description'],
-      image: parseImage(json),
-    );
+      image: parseImage(json));
   }
 
   @override

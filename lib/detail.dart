@@ -181,9 +181,8 @@ class DetailHeroInfo extends StatelessWidget {
               textAlign: TextAlign.start,
             )),
         SizedBox(height: padding),
-        FutureBuilder<MarvelComics>(
-            future: fetchComicsById(
-                "http://gateway.marvel.com/v1/public/comics/21366"),
+        FutureBuilder<List<MarvelComics>>(
+            future: fetchComicsByHero(hero),
             builder: (BuildContext context, snapshot) {
               if (snapshot.hasError)
                 return new Text('Error: ${snapshot.error}');
@@ -194,10 +193,38 @@ class DetailHeroInfo extends StatelessWidget {
                       alignment: Alignment.center,
                       child: CircularProgressIndicator());
                 default:
-                  return Text("${snapshot.data.description}");
+                  return Expanded(child: ComicsListWidget(data: snapshot.data));
               }
             })
       ],
     ));
+  }
+}
+
+class ComicsListWidget extends StatelessWidget {
+  final List<MarvelComics> data;
+
+  const ComicsListWidget({Key key, this.data}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: data.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          return InkWell(
+              onTap: () {
+                print("ASDasdasdas");
+              },
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Image.network("${data[index].image}")),
+                  Text("${data[index].title}"),
+                ],
+              ));
+        });
   }
 }

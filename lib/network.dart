@@ -16,7 +16,14 @@ Future<MarvelComics> fetchComicsById(String comicsUrl) async {
   var list = await invokeAndParse<MarvelComics>(
       "$comicsUrl?$queryParameters", (json) => MarvelComics.fromJson(json));
 //  return list;
-return Future.value(list.first);
+  return Future.value(list.first);
+}
+
+Future<List<MarvelComics>> fetchComicsByHero(MarvelHero hero) {
+  String queryParameters = generateAuthParameters();
+  final comicsUrl = "$_baseUrl/characters/${hero.id}/comics";
+  return invokeAndParse<MarvelComics>(
+      "$comicsUrl?$queryParameters", (json) => MarvelComics.fromJson(json));
 }
 
 Future<List<MarvelHero>> fetchHeroes(int page) async {
