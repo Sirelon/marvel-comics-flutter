@@ -25,25 +25,42 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
 
   @override
   void initState() {
-    super.initState();
     imageProvider = CachedNetworkImageProvider(widget.hero.image);
     _updatePaletteGenerator();
+    super.initState();
   }
 
-  Future<void> _updatePaletteGenerator() async {
+  void _updatePaletteGenerator() {
     PaletteGenerator.fromImageProvider(imageProvider).then((value) {
       setState(() {
         paletteGenerator = value;
-        dominantColor = paletteGenerator.dominantColor?.color;
-        print('Dominant color ' + dominantColor.toString());
-        invertColor = Color.fromARGB(
-            dominantColor.alpha,
-            255 - dominantColor.red,
-            255 - dominantColor.green,
-            255 - dominantColor.blue);
-        print('Invert color ' + dominantColor.toString());
+        dominantColor = paletteGenerator?.dominantColor?.color;
+        if (dominantColor == null) {
+          dominantColor =
+              _randomColor.randomColor(colorBrightness: ColorBrightness.light);
+        }
+        print('Dominant color $dominantColor ');
+//        print('Dominant color ' + dominantColor.toString());
+        final hslColor = HSLColor.fromColor(dominantColor);
+        invertColor = fromHsl(hslColor).toColor();
+//        invertColor = Color.fromARGB(
+//            dominantColor.alpha,
+//            (0.2126 * dominantColor.red).toInt(),
+//            (0.7152 * dominantColor.green).toInt(),
+//            (0.0722 * dominantColor.blue).toInt());
+//            255 - dominantColor.green,
+//            255 - dominantColor.blue);
+//        print('Invert color ' + invertColor.toString());
       });
-    });
+    }, onError: (e) => debugPrint(e));
+  }
+
+  static HSLColor fromHsl(HSLColor passedColor) {
+    num newH = passedColor.hue + 180;
+    if (newH > 360) newH -= 360;
+    HSLColor newHslColor = new HSLColor.fromAHSL(
+        1, newH, passedColor.saturation, passedColor.lightness);
+    return newHslColor;
   }
 
   @override
@@ -67,6 +84,13 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
 
     final iconAppBarTheme = IconThemeData(color: invertColor);
 
+    var titleStyle = TextStyle(
+        fontFamily: 'Black',
+        color: invertColor,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 8.0,
+        fontSize: 42.0);
+
     return new Scaffold(
         appBar: AppBar(
           title: Text(
@@ -79,15 +103,32 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
         ),
         body: PageView(
           controller: pageController,
-          physics: BouncingScrollPhysics(),
+//          physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,
           children: <Widget>[
             Stack(children: <Widget>[
               SensitiveWidget(child: bg),
               SafeArea(
-                  child: DetailHeroInfo(
-                hero: hero,
-                titleColor: invertColor,
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                      padding: EdgeInsets.all(24.0),
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        hero.name,
+                        style: titleStyle,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                      )),
+                  FlatButton.icon(
+                      onPressed: () {
+                        pageController.animateToPage(1,
+                            duration: Duration(seconds: 1), curve: Curves.ease);
+                      },
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      label: Text("Expand"))
+                ],
               ))
             ]),
             DetailHeroInfo(
@@ -139,10 +180,6 @@ class DetailHeroInfo extends StatelessWidget {
               textAlign: TextAlign.start,
             )),
         SizedBox(height: padding),
-        FlatButton.icon(
-            onPressed: () {},
-            icon: Icon(Icons.keyboard_arrow_down),
-            label: Text("Expand"))
       ],
     ));
   }
