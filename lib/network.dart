@@ -11,17 +11,21 @@ String _privateKey = "60191d7af4cfeb521f81845f955f10488ddff082";
 
 int _limit = 20;
 
+Future<MarvelComics> fetchComicsById(String comicsUrl) async {
+  String queryParameters = generateAuthParameters();
+  var list = await invokeAndParse<MarvelComics>(
+      "$comicsUrl?$queryParameters", (json) => MarvelComics.fromJson(json));
+//  return list;
+return Future.value(list.first);
+}
+
 Future<List<MarvelHero>> fetchHeroes(int page) async {
   return fetchHeroesWithFilters(page, Order.NAME_ASK, "");
 }
 
-Future<List<MarvelHero>> fetchHeroesWithFilters(int page, Order order,
-    String search) async {
-  final ts = DateTime
-      .now()
-      .millisecondsSinceEpoch;
-  final hash = generateMd5("$ts$_privateKey$_publicKey");
-  final queryParameters = "ts=$ts&apikey=$_publicKey&hash=$hash";
+Future<List<MarvelHero>> fetchHeroesWithFilters(
+    int page, Order order, String search) async {
+  String queryParameters = generateAuthParameters();
   final limitAndOffset = "limit=$_limit&offset=${_limit * page}";
 
   final orderByVal = getOrderValueString(order);
@@ -33,23 +37,36 @@ Future<List<MarvelHero>> fetchHeroesWithFilters(int page, Order order,
     final searchQuery = "nameStartsWith=$search";
     url += "&$searchQuery";
   }
-  final response = await http.get(
-      url);
+
+  return invokeAndParse<MarvelHero>(url, (json) => MarvelHero.fromJson(json));
+}
+
+typedef ParseItemFunction = dynamic Function(Map<String, dynamic> json);
+
+Future<List<T>> invokeAndParse<T>(String url, ParseItemFunction func) async {
+  final response = await http.get(url);
 
   if (response.statusCode == 200) {
     // If server returns an OK response, parse the JSON
-
     var wholeJson = json.decode(response.body);
     var dataJson = wholeJson["data"];
-    List<MarvelHero> heroes = List<MarvelHero>();
+    List<T> items = List<T>();
     for (var heroJson in dataJson["results"]) {
-      heroes.add(MarvelHero.fromJson(heroJson));
+      var item = func(heroJson);
+      items.add(item);
     }
-    return heroes;
+    return items;
   } else {
     // If that response was not OK, throw an error.
     throw Exception(response.body);
   }
+}
+
+String generateAuthParameters() {
+  final ts = DateTime.now().millisecondsSinceEpoch;
+  final hash = generateMd5("$ts$_privateKey$_publicKey");
+  final queryParameters = "ts=$ts&apikey=$_publicKey&hash=$hash";
+  return queryParameters;
 }
 
 String getOrderValueString(Order order) {

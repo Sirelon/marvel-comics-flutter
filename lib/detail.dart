@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/SensitiveWidget.dart';
+import 'package:marvel_heroes/network.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:random_color/random_color.dart';
 
@@ -164,7 +165,7 @@ class DetailHeroInfo extends StatelessWidget {
 
     return Center(
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Text(
           hero.name,
@@ -180,6 +181,22 @@ class DetailHeroInfo extends StatelessWidget {
               textAlign: TextAlign.start,
             )),
         SizedBox(height: padding),
+        FutureBuilder<MarvelComics>(
+            future: fetchComicsById(
+                "http://gateway.marvel.com/v1/public/comics/21366"),
+            builder: (BuildContext context, snapshot) {
+              if (snapshot.hasError)
+                return new Text('Error: ${snapshot.error}');
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return Align(
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator());
+                default:
+                  return Text("${snapshot.data.description}");
+              }
+            })
       ],
     ));
   }
