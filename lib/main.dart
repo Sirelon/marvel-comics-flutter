@@ -356,8 +356,8 @@ class _HeroTileState extends State<HeroTile> {
 
   _heroChoose(MarvelHero hero) {
     print(hero);
-    Navigator.push(context,
-        MaterialPageRoute(builder: (c) => HeroDetailPage(hero: hero)));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (c) => HeroDetailPage(hero: hero)));
   }
 }
 

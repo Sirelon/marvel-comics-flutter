@@ -5,6 +5,7 @@ import 'package:marvel_heroes/SensitiveWidget.dart';
 import 'package:marvel_heroes/network.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:random_color/random_color.dart';
+import 'package:snaplist/snaplist.dart';
 
 class HeroDetailPage extends StatefulWidget {
   final MarvelHero hero;
@@ -208,6 +209,47 @@ class ComicsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cardSize = Size(300.0, 360.0);
+    return SnapList(
+        padding: EdgeInsets.only(
+            left: (MediaQuery.of(context).size.width - cardSize.width) / 2),
+        sizeProvider: (index, data) => cardSize,
+        builder: (context, index, builderData) {
+          var scale;
+          var size;
+          print(builderData.progress);
+          if ((index == (builderData.center+1) || index == (builderData.center-1)) && builderData.progress > 90) {
+            scale = 16.0;
+            size = cardSize * 0.85;
+          } else {
+            scale = 0.0;
+            var progress = builderData.progress;
+            if (progress < 80){
+              progress = 80;
+            }
+//            size = cardSize / (100 / progress);
+            size = cardSize ;
+          }
+
+          return InkWell(
+              onTap: () {
+                print("ASDasdasdas");
+              },
+              child: ClipRRect(
+                  borderRadius: new BorderRadius.circular(scale),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox.fromSize(
+                          size: size,
+                          child: Image.network("${data[index].image}",
+                              fit: BoxFit.scaleDown)),
+                      Text("${data[index].title}"),
+                    ],
+                  )));
+        },
+        separatorProvider: (index, data) => Size(00.0, 00.0),
+        count: data.length);
+
     return ListView.builder(
         itemCount: data.length,
         scrollDirection: Axis.horizontal,
@@ -219,8 +261,8 @@ class ComicsListWidget extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                      width: 100,
-                      height: 100,
+                      width: 200,
+                      height: 200,
                       child: Image.network("${data[index].image}")),
                   Text("${data[index].title}"),
                 ],
