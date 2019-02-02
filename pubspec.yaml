@@ -26,7 +26,7 @@ dependencies:
   sensors: ^0.3.5
   palette_generator: ^0.1.1
   random_color: ^1.0.3
-  snaplist: ^0.1.6
+  carousel_slider: ^1.0.1
 
 
 dev_dependencies:
