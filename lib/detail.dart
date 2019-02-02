@@ -221,14 +221,16 @@ class ComicsListWidget extends StatelessWidget {
   }
 
   Widget _buildCarouselItem(MarvelComics comics) {
-    return ClipRRect(
-        borderRadius: new BorderRadius.circular(16.0),
-        child: Stack(
-          children: <Widget>[
-            Image.network(comics.image, fit: BoxFit.cover),
-            new Material(
-                color: Colors.transparent, child: InkWell(onTap: () {})),
-          ],
-        ));
+    return Padding(
+        padding: EdgeInsets.all(8.0),
+        child: ClipRRect(
+            borderRadius: new BorderRadius.circular(16.0),
+            child: Stack(
+              children: <Widget>[
+                CachedNetworkImage(imageUrl: comics.image, fit: BoxFit.cover),
+                new Material(
+                    color: Colors.transparent, child: InkWell(onTap: () {})),
+              ],
+            )));
   }
 }
