@@ -212,7 +212,12 @@ class ComicsListWidget extends StatelessWidget {
     final List<Widget> comicsImageList =
         data.map((comics) => _buildCarouselItem(comics)).toList();
 
-    return CarouselSlider(items: comicsImageList, aspectRatio: 3 / 4);
+    return CarouselSlider(
+        items: comicsImageList,
+        aspectRatio: 3 / 4,
+        autoPlayCurve: Curves.fastOutSlowIn,
+        autoPlay: true,
+        viewportFraction: 0.8);
   }
 
   Widget _buildCarouselItem(MarvelComics comics) {
