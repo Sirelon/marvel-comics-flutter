@@ -210,27 +210,31 @@ class ComicsListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> comicsImageList =
-        data.map((comics) => _buildCarouselItem(comics)).toList();
+        data.map((comics) => _buildCarouselItem(comics, context)).toList();
 
     return CarouselSlider(
         items: comicsImageList,
         aspectRatio: 3 / 4,
         autoPlayCurve: Curves.fastOutSlowIn,
         autoPlay: true,
-        viewportFraction: 0.8);
+        viewportFraction: 0.75);
   }
 
-  Widget _buildCarouselItem(MarvelComics comics) {
+  Widget _buildCarouselItem(MarvelComics comics, BuildContext context) {
     return Padding(
         padding: EdgeInsets.all(8.0),
         child: ClipRRect(
             borderRadius: new BorderRadius.circular(16.0),
-            child: Stack(
-              children: <Widget>[
+            child: Stack(children: <Widget>[
+              Column(children: <Widget>[
                 CachedNetworkImage(imageUrl: comics.image, fit: BoxFit.cover),
-                new Material(
-                    color: Colors.transparent, child: InkWell(onTap: () {})),
-              ],
-            )));
+                Text(
+                  comics.title,
+                  style: Theme.of(context).primaryTextTheme.headline,
+                )
+              ]),
+              new Material(
+                  color: Colors.transparent, child: InkWell(onTap: () {}))
+            ])));
   }
 }
