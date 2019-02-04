@@ -149,7 +149,9 @@ class DetailHeroInfo extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              Router(context).launchURL(hero.urlHolder.detailUrl);
+            },
             padding: EdgeInsets.all(8.0),
             child: Text(
               hero.name,
