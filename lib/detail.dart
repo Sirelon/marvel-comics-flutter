@@ -19,9 +19,10 @@ class HeroDetailPage extends StatefulWidget {
 class _HeroDetailPageState extends State<HeroDetailPage> {
   ImageProvider imageProvider;
 
-  PaletteGenerator paletteGenerator;
   Color dominantColor = Colors.white;
   Color invertColor = Colors.white;
+  Brightness brightness = Brightness.dark;
+
   RandomColor _randomColor = RandomColor();
   PageController pageController = PageController();
 
@@ -33,26 +34,21 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
   }
 
   void _updatePaletteGenerator() {
-    PaletteGenerator.fromImageProvider(imageProvider).then((value) {
+    PaletteGenerator.fromImageProvider(imageProvider).then((paletteGenerator) {
       setState(() {
-        paletteGenerator = value;
         dominantColor = paletteGenerator?.dominantColor?.color;
         if (dominantColor == null) {
           dominantColor =
               _randomColor.randomColor(colorBrightness: ColorBrightness.light);
         }
+        brightness = ThemeData.estimateBrightnessForColor(dominantColor);
+        if (brightness == Brightness.dark) {
+          invertColor = Colors.white;
+        } else {
+          invertColor = Colors.black;
+        }
+
         print('Dominant color $dominantColor ');
-//        print('Dominant color ' + dominantColor.toString());
-        final hslColor = HSLColor.fromColor(dominantColor);
-        invertColor = fromHsl(hslColor).toColor();
-//        invertColor = Color.fromARGB(
-//            dominantColor.alpha,
-//            (0.2126 * dominantColor.red).toInt(),
-//            (0.7152 * dominantColor.green).toInt(),
-//            (0.0722 * dominantColor.blue).toInt());
-//            255 - dominantColor.green,
-//            255 - dominantColor.blue);
-//        print('Invert color ' + invertColor.toString());
       });
     }, onError: (e) => debugPrint(e));
   }
@@ -68,14 +64,6 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
   @override
   Widget build(BuildContext context) {
     final hero = widget.hero;
-//    final bg = CachedNetworkImage(
-//        errorWidget: Icon(Icons.error),
-//        imageUrl: hero.image,
-//        fit: BoxFit.cover,
-//        height: double.infinity,
-//        width: double.infinity,
-//        alignment: Alignment.center,
-//        placeholder: CircularProgressIndicator());
 
     final bg = Image(
         image: imageProvider,
@@ -89,9 +77,8 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
     var titleStyle = TextStyle(
         fontFamily: 'Black',
         color: invertColor,
-        fontWeight: FontWeight.w800,
         letterSpacing: 8.0,
-        fontSize: 42.0);
+        fontSize: 16.0);
 
     return new Scaffold(
         appBar: AppBar(
@@ -100,42 +87,34 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
             style: TextStyle(color: invertColor),
           ),
           backgroundColor: dominantColor,
-          brightness: ThemeData.estimateBrightnessForColor(dominantColor),
+          brightness: brightness,
           iconTheme: iconAppBarTheme,
         ),
         body: PageView(
           controller: pageController,
-//          physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,
           children: <Widget>[
             Stack(children: <Widget>[
               SensitiveWidget(child: bg),
               SafeArea(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      padding: EdgeInsets.all(24.0),
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        hero.name,
-                        style: titleStyle,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                      )),
-                  FlatButton.icon(
-                      onPressed: () {
-                        pageController.animateToPage(1,
-                            duration: Duration(seconds: 1), curve: Curves.ease);
-                      },
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      label: Text("Expand"))
-                ],
-              ))
+                  child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: FlatButton.icon(
+                        onPressed: () {
+                          pageController.animateToPage(1,
+                              duration: Duration(seconds: 1),
+                              curve: Curves.ease);
+                        },
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        label: Text(
+                          "Expand",
+                          style: titleStyle,
+                        ),
+                      )))
             ]),
             DetailHeroInfo(
               hero: hero,
-              titleColor: invertColor,
+              titleColor: dominantColor,
             )
           ],
         ));
@@ -158,9 +137,9 @@ class DetailHeroInfo extends StatelessWidget {
         color: titleColor,
         fontWeight: FontWeight.w800,
         letterSpacing: padding,
-        fontSize: 42.0);
+        fontSize: 36.0);
     var subTitleStyle = TextStyle(
-      fontSize: 24.0,
+      fontSize: 20.0,
       color: titleColor,
     );
 
@@ -168,11 +147,13 @@ class DetailHeroInfo extends StatelessWidget {
         child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Text(
-          hero.name,
-          style: titleStyle,
-          textAlign: TextAlign.center,
-        ),
+        Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              hero.name,
+              style: titleStyle,
+              textAlign: TextAlign.center,
+            )),
         SizedBox(height: padding),
         Padding(
             padding: EdgeInsets.all(padding),
@@ -194,7 +175,7 @@ class DetailHeroInfo extends StatelessWidget {
                       alignment: Alignment.center,
                       child: CircularProgressIndicator());
                 default:
-                  return Expanded(child: ComicsListWidget(data: snapshot.data));
+                  return ComicsListWidget(data: snapshot.data);
               }
             })
       ],
@@ -209,15 +190,24 @@ class ComicsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (data.isEmpty) {
+      return RaisedButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text("Back"),
+      );
+    }
     final List<Widget> comicsImageList =
         data.map((comics) => _buildCarouselItem(comics, context)).toList();
 
-    return CarouselSlider(
-        items: comicsImageList,
-        aspectRatio: 3 / 4,
-        autoPlayCurve: Curves.fastOutSlowIn,
-        autoPlay: true,
-        viewportFraction: 0.75);
+    return Expanded(
+        child: CarouselSlider(
+            items: comicsImageList,
+            aspectRatio: 3 / 4,
+            autoPlayCurve: Curves.fastOutSlowIn,
+            autoPlay: true,
+            viewportFraction: 0.75));
   }
 
   Widget _buildCarouselItem(MarvelComics comics, BuildContext context) {
