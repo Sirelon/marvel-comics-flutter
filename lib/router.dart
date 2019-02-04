@@ -10,7 +10,7 @@ class Router {
 
   void navigateToHero(MarvelHero hero) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (c) => HeroDetailPage(hero: hero)));
+        context, MaterialPageRoute(builder: (c) => HeroDetailPage(hero)));
   }
 
   void closeCurrent() {

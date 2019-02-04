@@ -8,10 +8,13 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:random_color/random_color.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+// Will get from this state all needed parameters on another widgets and states
+final heroDetailKey = new GlobalKey<_HeroDetailPageState>();
+
 class HeroDetailPage extends StatefulWidget {
   final MarvelHero hero;
 
-  const HeroDetailPage({Key key, this.hero}) : super(key: key);
+  HeroDetailPage(this.hero) : super(key: heroDetailKey);
 
   @override
   State<StatefulWidget> createState() => _HeroDetailPageState();
@@ -52,14 +55,6 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
         print('Dominant color $dominantColor ');
       });
     }, onError: (e) => debugPrint(e));
-  }
-
-  static HSLColor fromHsl(HSLColor passedColor) {
-    num newH = passedColor.hue + 180;
-    if (newH > 360) newH -= 360;
-    HSLColor newHslColor = new HSLColor.fromAHSL(
-        1, newH, passedColor.saturation, passedColor.lightness);
-    return newHslColor;
   }
 
   @override
@@ -113,26 +108,22 @@ class _HeroDetailPageState extends State<HeroDetailPage> {
                         ),
                       )))
             ]),
-            DetailHeroInfo(
-              hero: hero,
-              titleColor: dominantColor,
-            )
+            DetailHeroInfo(hero: hero)
           ],
         ));
   }
 }
 
 class DetailHeroInfo extends StatelessWidget {
-  const DetailHeroInfo(
-      {Key key, @required this.hero, @required this.titleColor})
-      : super(key: key);
+  const DetailHeroInfo({Key key, @required this.hero}) : super(key: key);
 
   final MarvelHero hero;
-  final Color titleColor;
 
   @override
   Widget build(BuildContext context) {
     var padding = 8.0;
+    var titleColor = heroDetailKey.currentState.dominantColor;
+
     var titleStyle = TextStyle(
         fontFamily: 'Black',
         color: titleColor,
@@ -216,7 +207,7 @@ class ComicsListWidget extends StatelessWidget {
 
   Widget _buildCarouselItem(MarvelComics comics, BuildContext context) {
     return Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(4.0),
         child: ClipRRect(
             borderRadius: new BorderRadius.circular(16.0),
             child: Stack(children: <Widget>[
@@ -224,7 +215,11 @@ class ComicsListWidget extends StatelessWidget {
                 CachedNetworkImage(imageUrl: comics.image, fit: BoxFit.cover),
                 Text(
                   comics.title,
-                  style: Theme.of(context).primaryTextTheme.headline,
+                  style: TextStyle(
+                      color: heroDetailKey.currentState.dominantColor,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w800,
+                      fontFamily: 'Marvel'),
                 )
               ]),
               new Material(
