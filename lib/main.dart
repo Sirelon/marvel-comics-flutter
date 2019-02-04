@@ -4,8 +4,8 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:marvel_heroes/detail.dart';
 import 'package:marvel_heroes/entities.dart';
+import 'package:marvel_heroes/router.dart';
 import 'network.dart';
 
 void main() => runApp(new MyApp());
@@ -261,6 +261,8 @@ class HeroTile extends StatefulWidget {
 }
 
 class _HeroTileState extends State<HeroTile> {
+  Router router;
+
   LoadMoreStatus loadStatus = LoadMoreStatus.STABLE;
   List<MarvelHero> heroes;
   int currentPage = 1;
@@ -319,6 +321,7 @@ class _HeroTileState extends State<HeroTile> {
   @override
   void initState() {
     heroes = widget.heroes;
+    router = Router(context);
     super.initState();
   }
 
@@ -356,8 +359,7 @@ class _HeroTileState extends State<HeroTile> {
 
   _heroChoose(MarvelHero hero) {
     print(hero);
-    Navigator.push(
-        context, MaterialPageRoute(builder: (c) => HeroDetailPage(hero: hero)));
+    router.navigateToHero(hero);
   }
 }
 

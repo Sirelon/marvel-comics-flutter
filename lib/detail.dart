@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/SensitiveWidget.dart';
 import 'package:marvel_heroes/network.dart';
+import 'package:marvel_heroes/router.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:random_color/random_color.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -147,7 +148,8 @@ class DetailHeroInfo extends StatelessWidget {
         child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Padding(
+        FlatButton(
+            onPressed: () {},
             padding: EdgeInsets.all(8.0),
             child: Text(
               hero.name,
@@ -193,7 +195,7 @@ class ComicsListWidget extends StatelessWidget {
     if (data.isEmpty) {
       return RaisedButton(
         onPressed: () {
-          Navigator.pop(context);
+          Router(context).closeCurrent();
         },
         child: Text("Back"),
       );
