@@ -41,9 +41,7 @@ class _ComicsListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (data.isEmpty) {
       return RaisedButton(
-        onPressed: () {
-          Router(context).closeCurrent();
-        },
+        onPressed: () => Router(context).closeCurrent(),
         child: Text("Back"),
       );
     }
@@ -75,13 +73,13 @@ class _ComicsListWidget extends StatelessWidget {
             borderRadius: new BorderRadius.circular(16.0),
             child: Stack(children: <Widget>[
               Column(children: <Widget>[
-                CachedNetworkImage(imageUrl: comics.image, fit: BoxFit.cover),
+                CachedNetworkImage(imageUrl: comics.image, fit: BoxFit.scaleDown),
                 Text(
                   comics.title,
                   style: TextStyle(
                       color: state.dominantColor,
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w400,
                       fontFamily: 'Marvel'),
                 )
               ]),

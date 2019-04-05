@@ -27,7 +27,7 @@ Future<List<MarvelComics>> fetchComicsByHero(MarvelHero hero) {
 }
 
 Future<List<MarvelHero>> fetchHeroes(int page) async {
-  return fetchHeroesWithFilters(page, Order.NAME_ASK, "");
+  return fetchHeroesWithFilters(page, Order.MODIFIED_DESC, "");
 }
 
 Future<List<MarvelHero>> fetchHeroesWithFilters(
