@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:marvel_heroes/detail.dart';
+import 'package:marvel_heroes/hero/detail/detail.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
@@ -10,7 +10,7 @@ class Router {
 
   void navigateToHero(MarvelHero hero) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (c) => HeroDetailPage(hero)));
+        context, MaterialPageRoute(builder: (c) => HeroDetailPage(hero: hero)));
   }
 
   void closeCurrent() {
