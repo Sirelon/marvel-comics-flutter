@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marvel_heroes/hero/detail/detail.dart';
+import 'package:marvel_heroes/hero/detail/widgets.dart';
 import 'package:marvel_heroes/widgets/SensitiveWidget.dart';
 
 class HeroImage extends StatelessWidget {
@@ -15,14 +16,7 @@ class HeroImage extends StatelessWidget {
               height: double.infinity,
               width: double.infinity,
               alignment: Alignment.center)),
-      SafeArea(
-          child: Align(
-              alignment: Alignment.bottomCenter,
-              child: FlatButton.icon(
-                onPressed: () => state.goTo(1),
-                icon: Icon(Icons.keyboard_arrow_down),
-                label: Text("Expand", style: state.titleStyle),
-              )))
+      ExpandButton(1)
     ]);
   }
 }
