@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marvel_heroes/hero/detail/detail.dart';
 import 'package:marvel_heroes/hero/detail/widgets.dart';
 import 'package:marvel_heroes/router.dart';
+import 'package:marvel_heroes/widgets/BlurredWidget.dart';
 
 class DetailHeroInfo extends StatelessWidget {
   const DetailHeroInfo({Key key}) : super(key: key);
@@ -21,30 +22,34 @@ class DetailHeroInfo extends StatelessWidget {
         fontSize: 56.0);
 
     var edgeInsets = EdgeInsets.all(padding);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        FlatButton(
-            onPressed: () =>
-                Router(context).launchURL(state.hero.urlHolder.detailUrl),
-            padding: edgeInsets,
-            child: Text(
-              state.hero.name,
-              style: titleStyle,
-              textAlign: TextAlign.center,
-            )),
-        Padding(
-            padding: edgeInsets,
-            child: Text(
-              '     ${state.hero.description}',
-              style: TextStyle(
-                fontSize: 20.0,
-                color: titleColor,
-              ),
-              textAlign: TextAlign.start,
-            )),
-        ExpandButton(2)
-      ],
-    );
+
+    return BlurredWidget(
+        imageProvider: state.imageProvider,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            SizedBox(height: 24),
+            FlatButton(
+                onPressed: () =>
+                    Router(context).launchURL(state.hero.urlHolder.detailUrl),
+                padding: edgeInsets,
+                child: Text(
+                  state.hero.name,
+                  style: titleStyle,
+                  textAlign: TextAlign.center,
+                )),
+            Padding(
+                padding: edgeInsets,
+                child: Text(
+                  '     ${state.hero.description}',
+                  style: TextStyle(
+                    fontSize: 48.0,
+                    color: titleColor,
+                  ),
+                  textAlign: TextAlign.start,
+                )),
+            ExpandButton(2)
+          ],
+        ));
   }
 }
