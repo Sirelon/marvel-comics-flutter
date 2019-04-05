@@ -89,6 +89,15 @@ class _HeroScreen extends StatelessWidget {
 
     final iconAppBarTheme = IconThemeData(color: state.invertColor);
 
+    var pages = <Widget>[];
+    pages.add(HeroImage());
+
+    var description = state.hero.description;
+    if (description != null && description.isNotEmpty) {
+      pages.add(DetailHeroInfo());
+    }
+    pages.add(HeroComicsPage());
+
     return new Scaffold(
         appBar: AppBar(
           title: Text(
@@ -102,11 +111,7 @@ class _HeroScreen extends StatelessWidget {
         body: PageView(
           controller: state._pageController,
           scrollDirection: Axis.vertical,
-          children: <Widget>[
-            HeroImage(),
-            DetailHeroInfo(),
-            HeroComicsPage()
-          ],
+          children: pages,
         ));
   }
 }
