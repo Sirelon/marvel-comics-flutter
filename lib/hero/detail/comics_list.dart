@@ -5,6 +5,7 @@ import 'package:marvel_heroes/hero/detail/detail.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/network.dart';
 import 'package:marvel_heroes/router.dart';
+import 'package:marvel_heroes/widgets/loading_widgets.dart';
 
 class HeroComicsPage extends StatelessWidget {
   Future<List<MarvelComics>> _comicsFuture;
@@ -24,7 +25,7 @@ class HeroComicsPage extends StatelessWidget {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
+              return Center(child: BigLoadingWidget());
             default:
               return _ComicsListWidget(data: snapshot.data);
           }
@@ -73,7 +74,10 @@ class _ComicsListWidget extends StatelessWidget {
             borderRadius: new BorderRadius.circular(16.0),
             child: Stack(children: <Widget>[
               Column(children: <Widget>[
-                CachedNetworkImage(imageUrl: comics.image, fit: BoxFit.scaleDown),
+                CachedNetworkImage(
+                    imageUrl: comics.image,
+                    fit: BoxFit.scaleDown,
+                    placeholder: SmallLoadingWidget()),
                 Text(
                   comics.title,
                   textAlign: TextAlign.center,

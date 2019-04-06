@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/router.dart';
+import 'package:marvel_heroes/widgets/loading_widgets.dart';
 import 'network.dart';
 
 void main() => runApp(new MyApp());
@@ -139,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       case ConnectionState.waiting:
                         return Align(
                             alignment: Alignment.center,
-                            child: CircularProgressIndicator());
+                            child: BigLoadingWidget());
                       default:
                         return HeroTile(
                             heroes: snapshot.data,
@@ -305,7 +306,7 @@ class _HeroTileState extends State<HeroTile> {
                         CachedNetworkImage(
                             errorWidget: Icon(Icons.error),
                             imageUrl: hero.image,
-                            placeholder: CircularProgressIndicator()),
+                            placeholder: SmallLoadingWidget()),
                         Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(hero.name,
