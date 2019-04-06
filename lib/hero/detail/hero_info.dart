@@ -10,6 +10,7 @@ class DetailHeroInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HeroPageState state = HeroDetailPage.of(context);
+    final queryData = MediaQuery.of(context);
 
     var titleColor = state.dominantColor;
 
@@ -18,8 +19,8 @@ class DetailHeroInfo extends StatelessWidget {
         fontFamily: 'Black',
         color: titleColor,
         fontWeight: FontWeight.w900,
-        letterSpacing: padding * 2,
-        fontSize: 56.0);
+        letterSpacing: padding,
+        fontSize: 36 * queryData.textScaleFactor);
 
     var edgeInsets = EdgeInsets.all(padding);
 
@@ -28,7 +29,7 @@ class DetailHeroInfo extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            SizedBox(height: 24),
+            SizedBox(height: 18),
             FlatButton(
                 onPressed: () =>
                     Router(context).launchURL(state.hero.urlHolder.detailUrl),
@@ -43,10 +44,10 @@ class DetailHeroInfo extends StatelessWidget {
                 child: Text(
                   '     ${state.hero.description}',
                   style: TextStyle(
-                    fontSize: 48.0,
+                    fontSize: 32 * queryData.textScaleFactor,
                     color: titleColor,
                   ),
-                  textAlign: TextAlign.start,
+                  textAlign: TextAlign.center,
                 )),
             ExpandButton(2)
           ],

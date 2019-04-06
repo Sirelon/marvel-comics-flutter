@@ -76,9 +76,10 @@ class _ComicsListWidget extends StatelessWidget {
                 CachedNetworkImage(imageUrl: comics.image, fit: BoxFit.scaleDown),
                 Text(
                   comics.title,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                       color: state.dominantColor,
-                      fontSize: 32.0,
+                      fontSize: 24.0,
                       fontWeight: FontWeight.w400,
                       fontFamily: 'Marvel'),
                 )
