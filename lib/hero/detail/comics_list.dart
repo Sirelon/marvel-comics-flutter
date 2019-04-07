@@ -46,8 +46,16 @@ class _ComicsListWidget extends StatelessWidget {
         child: Text("Back"),
       );
     }
+
+    final HeroPageState state = HeroDetailPage.of(context);
+    TextStyle titleStyle = TextStyle(
+        color: state.dominantColor,
+        fontSize: 24.0,
+        fontWeight: FontWeight.w400,
+        fontFamily: 'Marvel');
+
     final List<Widget> comicsImageList =
-        data.map((comics) => _buildCarouselItem(comics, context)).toList();
+        data.map((comics) => _buildCarouselItem(comics, titleStyle)).toList();
 
     final queryData = MediaQuery.of(context);
 
@@ -60,14 +68,15 @@ class _ComicsListWidget extends StatelessWidget {
     return CarouselSlider(
       items: comicsImageList,
       aspectRatio: ratio,
+      height: queryData.size.height - 150,
       autoPlayCurve: Curves.fastOutSlowIn,
       autoPlay: true,
       viewportFraction: fraction,
     );
   }
 
-  Widget _buildCarouselItem(MarvelComics comics, BuildContext context) {
-    final HeroPageState state = HeroDetailPage.of(context);
+  Widget _buildCarouselItem(MarvelComics comics, TextStyle titleStyle) {
+
     return Padding(
         padding: EdgeInsets.all(4.0),
         child: ClipRRect(
@@ -81,11 +90,7 @@ class _ComicsListWidget extends StatelessWidget {
                 Text(
                   comics.title,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: state.dominantColor,
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Marvel'),
+                  style: titleStyle,
                 )
               ]),
               new Material(
