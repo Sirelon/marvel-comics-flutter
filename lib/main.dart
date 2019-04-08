@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var headLineTheme = TextStyle(
       fontFamily: 'FF',
-      color: Theme.of(context).primaryColor,
+      color: const Color(0xFFef5350),
       fontWeight: FontWeight.w800,
     );
     var titleTheme = TextStyle(
@@ -25,12 +25,19 @@ class MyApp extends StatelessWidget {
       color: Colors.white,
       fontWeight: FontWeight.normal,
     );
+    const bgColor = const Color(0xFFefefef);
     return new MaterialApp(
       title: 'Flutter Demo',
       theme: new ThemeData(
           fontFamily: 'Marvel',
-          splashColor: Theme.of(context).accentColor,
-          primarySwatch: Colors.red,
+          backgroundColor: bgColor,
+          scaffoldBackgroundColor: bgColor,
+          splashColor: const Color(0xFF263238),
+          primaryColor: const Color(0xFFef5350),
+          primaryColorLight: const Color(0xFFff867c),
+          primaryColorDark: const Color(0xFFb61827),
+          accentColor: const Color(0xFF263238),
+//          primarySwatch: Colors.redAccent,
           textTheme: TextTheme(title: titleTheme),
           primaryTextTheme: TextTheme(headline: headLineTheme)),
       home: new MyHomePage(title: 'Flutter Demo Home Page'),
