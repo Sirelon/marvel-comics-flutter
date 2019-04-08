@@ -309,7 +309,9 @@ class _HeroTileState extends State<HeroTile> {
   Widget build(BuildContext context) => NotificationListener(
       child: _buildPage(heroes), onNotification: _onNotification);
 
-  Widget _buildPage(List<MarvelHero> items) {
+  Widget _buildPage(List<MarvelHero> heroes) {
+    List<dynamic> items = List.from(heroes);
+
     return OrientationBuilder(builder: (context, orientation) {
       final length = items.length;
       final isLoading = loadStatus == LoadMoreStatus.LOADING;
@@ -317,35 +319,18 @@ class _HeroTileState extends State<HeroTile> {
           controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-          staggeredTileBuilder: (int index) =>
-              StaggeredTile.fit((index == length) ? 3 : 1),
+          staggeredTileBuilder: (int index) => _buildTileBuilder(items, index),
           itemCount: (isLoading) ? length + 1 : length,
           itemBuilder: (_, int index) {
             if (index == length) {
               return LinearProgressIndicator();
             }
-            MarvelHero hero = items[index];
-            print(hero.image);
-            return Card(
-                elevation: 2.0,
-                margin: EdgeInsets.all(8.0),
-                child: InkWell(
-                    splashColor: Theme.of(context).accentColor,
-                    onTap: () => _heroChoose(hero),
-                    child: Column(
-                      children: <Widget>[
-                        CachedNetworkImage(
-                            errorWidget: Icon(Icons.error),
-                            imageUrl: hero.image,
-                            placeholder: SmallLoadingWidget()),
-                        Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(hero.name,
-                                style:
-                                    Theme.of(context).primaryTextTheme.headline,
-                                textAlign: TextAlign.center)),
-                      ],
-                    )));
+            final item = items[index];
+            if (item is MarvelHero) {
+              return _HeroCard(hero: item);
+            } else {
+              return Text("ASDFasdas");
+            }
           });
     });
   }
@@ -392,6 +377,48 @@ class _HeroTileState extends State<HeroTile> {
   _heroChoose(MarvelHero hero) {
     print(hero);
     router.navigateToHero(hero);
+  }
+
+  _buildTileBuilder(List items, int index) {
+    final length = items.length;
+    int fit = 1;
+    if (index == length) {
+      fit = 3;
+    }
+
+    if (!(items[index] is MarvelHero)) fit = 3;
+
+    return StaggeredTile.fit(fit);
+  }
+}
+
+class _HeroCard extends StatelessWidget {
+  final MarvelHero hero;
+
+  const _HeroCard({Key key, this.hero}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        elevation: 2.0,
+        margin: EdgeInsets.all(8.0),
+        child: InkWell(
+            splashColor: Theme.of(context).accentColor,
+            onTap: null,
+//            onTap: () => _heroChoose(hero),
+            child: Column(
+              children: <Widget>[
+                CachedNetworkImage(
+                    errorWidget: Icon(Icons.error),
+                    imageUrl: hero.image,
+                    placeholder: SmallLoadingWidget()),
+                Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(hero.name,
+                        style: Theme.of(context).primaryTextTheme.headline,
+                        textAlign: TextAlign.center)),
+              ],
+            )));
   }
 }
 
