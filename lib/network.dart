@@ -39,7 +39,7 @@ Future<List<MarvelHero>> fetchHeroesWithFilters(
   final orderQuery = "orderBy=$orderByVal";
 
   var url = "$_baseUrl/characters?$queryParameters&$limitAndOffset&$orderQuery";
-  print(url);
+
   if (search != null && search.isNotEmpty) {
     final searchQuery = "nameStartsWith=$search";
     url += "&$searchQuery";
@@ -51,6 +51,7 @@ Future<List<MarvelHero>> fetchHeroesWithFilters(
 typedef ParseItemFunction = dynamic Function(Map<String, dynamic> json);
 
 Future<List<T>> invokeAndParse<T>(String url, ParseItemFunction func) async {
+  print(url);
   final response = await http.get(url);
 
   if (response.statusCode == 200) {

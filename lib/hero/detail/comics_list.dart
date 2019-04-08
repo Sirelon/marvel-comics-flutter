@@ -54,8 +54,9 @@ class _ComicsListWidget extends StatelessWidget {
         fontWeight: FontWeight.w400,
         fontFamily: 'Marvel');
 
-    final List<Widget> comicsImageList =
-        data.map((comics) => _buildCarouselItem(comics, titleStyle)).toList();
+    final List<Widget> comicsImageList = data
+        .map((comics) => _buildCarouselItem(context, comics, titleStyle))
+        .toList();
 
     final queryData = MediaQuery.of(context);
 
@@ -75,8 +76,8 @@ class _ComicsListWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCarouselItem(MarvelComics comics, TextStyle titleStyle) {
-
+  Widget _buildCarouselItem(
+      BuildContext context, MarvelComics comics, TextStyle titleStyle) {
     return Padding(
         padding: EdgeInsets.all(4.0),
         child: ClipRRect(
@@ -94,7 +95,12 @@ class _ComicsListWidget extends StatelessWidget {
                 )
               ]),
               new Material(
-                  color: Colors.transparent, child: InkWell(onTap: () {}))
+                  color: Colors.transparent,
+                  child: InkWell(onTap: () => _onComicsClick(context, comics)))
             ])));
+  }
+
+  _onComicsClick(BuildContext context, MarvelComics comics) {
+    Router(context).launchURL(comics.url);
   }
 }

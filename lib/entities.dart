@@ -33,14 +33,16 @@ class MarvelComics {
   final String title;
   final String description;
   final String image;
+  final String url;
 
-  MarvelComics({this.id, this.title, this.image, this.description});
+  MarvelComics({this.id, this.title, this.image, this.description, this.url});
 
   factory MarvelComics.fromJson(Map<String, dynamic> json) {
     return MarvelComics(
       id: json['id'],
       title: json['title'],
       description: json['description'],
+      url: UrlHolder.fromJson(json).detailUrl,
       image: parseImage(json),
     );
   }
