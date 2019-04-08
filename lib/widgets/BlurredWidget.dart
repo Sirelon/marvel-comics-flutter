@@ -18,9 +18,9 @@ class BlurredWidget extends StatelessWidget {
           height: double.infinity,
           fit: BoxFit.cover),
       BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
         child: Container(
-          decoration: BoxDecoration(color: Colors.white.withOpacity(0.3)),
+          decoration: BoxDecoration(color: Colors.white.withOpacity(0.1)),
         ),
       ),
       child

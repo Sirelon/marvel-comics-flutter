@@ -151,8 +151,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void stateCallback(FilterState filterState) {
+    print("STATE CALLBACK " + filterState.toString());
     setState(() {
-      print("HEy i am here");
       initialFilterState = filterState;
       fetchFuture =
           fetchHeroesWithFilters(0, filterState.order, filterState.searchQuery);
@@ -216,6 +216,11 @@ class _FiltersPanelState extends State<FiltersPanel> {
 
   @override
   Widget build(BuildContext context) {
+    return FlatButton.icon(
+        onPressed: _showSordedOptions,
+        icon: Icon(Icons.sort),
+        label: Text(orderMap[choosedOrder], textScaleFactor: 1.3));
+
     final orderItems = orderMap.entries
         .map((entry) =>
             DropdownMenuItem(child: Text(entry.value), value: entry.key))
@@ -231,6 +236,25 @@ class _FiltersPanelState extends State<FiltersPanel> {
             choosedOrder = value;
           });
         });
+  }
+
+  void _showSordedOptions() async {
+    final orderItems = orderMap.entries
+        .map((entry) => SimpleDialogOption(
+            child: Text(entry.value, textScaleFactor: 2.0),
+            onPressed: () => Navigator.pop(context, entry)))
+        .toList();
+
+    MapEntry<Order, String> value = await showDialog(
+        context: context, builder: (con) => SimpleDialog(children: orderItems));
+    if (value == null) return;
+
+    print("Show Sorted Options" + value.toString());
+    var newState = filterState.copy(newOrder: value.key);
+    stateCallback(newState);
+    setState(() {
+      choosedOrder = value.key;
+    });
   }
 }
 
