@@ -374,11 +374,6 @@ class _HeroTileState extends State<HeroTile> {
     return true;
   }
 
-  _heroChoose(MarvelHero hero) {
-    print(hero);
-    router.navigateToHero(hero);
-  }
-
   _buildTileBuilder(List items, int index) {
     final length = items.length;
     int fit = 1;
@@ -404,8 +399,7 @@ class _HeroCard extends StatelessWidget {
         margin: EdgeInsets.all(8.0),
         child: InkWell(
             splashColor: Theme.of(context).accentColor,
-            onTap: null,
-//            onTap: () => _heroChoose(hero),
+            onTap: () => Router(context).navigateToHero(hero),
             child: Column(
               children: <Widget>[
                 CachedNetworkImage(
