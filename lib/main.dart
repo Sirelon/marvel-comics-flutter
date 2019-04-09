@@ -312,6 +312,8 @@ class _HeroTileState extends State<HeroTile> {
   Widget _buildPage(List<MarvelHero> heroes) {
     List<dynamic> items = List.from(heroes);
 
+    items.insert(3, "ASdadasd asd asd asd");
+
     return OrientationBuilder(builder: (context, orientation) {
       final length = items.length;
       final isLoading = loadStatus == LoadMoreStatus.LOADING;
@@ -329,7 +331,7 @@ class _HeroTileState extends State<HeroTile> {
             if (item is MarvelHero) {
               return _HeroCard(hero: item);
             } else {
-              return Text("ASDFasdas");
+              return Text("$item");
             }
           });
     });
@@ -361,7 +363,6 @@ class _HeroTileState extends State<HeroTile> {
           fetchHeroesWithFilters(
                   currentPage, filterState.order, filterState.searchQuery)
               .then((items) {
-            print("I AM FETCHED $items");
             currentPage++;
             loadStatus = LoadMoreStatus.STABLE;
             setState(() {

@@ -61,15 +61,15 @@ class _SensitiveWidgetState extends State<SensitiveWidget> {
 
   @override
   Widget build(BuildContext context) {
-    rotX *= 0.43;
-    rotY *= 0.43;
+    rotX *= 0.33;
+    rotY *= 0.53;
 
     var transform = Transform(
       transform: perspective
         ..setRotationX(rotX)
         ..rotateY(rotY),
       alignment: FractionalOffset.center,
-      child: Transform.scale(scale: 1.0, child: widget.child),
+      child: Transform.scale(scale: 1.15, child: widget.child),
     );
 
     return transform;
