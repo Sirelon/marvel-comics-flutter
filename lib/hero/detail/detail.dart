@@ -54,7 +54,8 @@ class HeroPageState extends State<HeroDetailPage> {
   }
 
   void _updatePaletteGenerator() {
-    PaletteGenerator.fromImageProvider(imageProvider).then((paletteGenerator) {
+    PaletteGenerator.fromImageProvider(imageProvider, size: Size.square(500))
+        .then((paletteGenerator) {
       setState(() {
         dominantColor = paletteGenerator?.dominantColor?.color;
         if (dominantColor == null) {

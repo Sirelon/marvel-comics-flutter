@@ -395,12 +395,13 @@ class _HeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var router = Router(context);
     return Card(
         elevation: 2.0,
         margin: EdgeInsets.all(8.0),
         child: InkWell(
             splashColor: Theme.of(context).accentColor,
-            onTap: () => Router(context).navigateToHero(hero),
+            onTap: () => router.navigateToHero(hero),
             child: Column(
               children: <Widget>[
                 CachedNetworkImage(
