@@ -1,5 +1,9 @@
+import 'dart:isolate';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:marvel_heroes/hero/detail/hero_image.dart';
 import 'package:marvel_heroes/hero/detail/comics_list.dart';
 import 'package:marvel_heroes/hero/detail/hero_info.dart';
@@ -54,30 +58,34 @@ class HeroPageState extends State<HeroDetailPage> {
   }
 
   void _updatePaletteGenerator() {
-    PaletteGenerator.fromImageProvider(imageProvider, size: Size.square(500))
-        .then((paletteGenerator) {
-      setState(() {
-        dominantColor = paletteGenerator?.dominantColor?.color;
-        if (dominantColor == null) {
-          dominantColor =
-              _randomColor.randomColor(colorBrightness: ColorBrightness.light);
-        }
-        brightness = ThemeData.estimateBrightnessForColor(dominantColor);
-        if (brightness == Brightness.dark) {
-          invertColor = Colors.white;
-        } else {
-          invertColor = Colors.black;
-        }
+//    final imageUrl =
+//        "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500";
+    PaletteGenerator.fromImageProvider(imageProvider).then((paletteGenerator) {
+      print(" asds asd asd$paletteGenerator");
+      final color = paletteGenerator?.dominantColor?.color;
+      print(" I AM INSIDE FUTURE $color");
 
-        titleStyle = TextStyle(
-            fontFamily: 'Black',
-            color: invertColor,
-            letterSpacing: padding,
-            fontSize: 16.0);
+      dominantColor = paletteGenerator?.dominantColor?.color;
+      if (dominantColor == null) {
+        dominantColor =
+            _randomColor.randomColor(colorBrightness: ColorBrightness.light);
+      }
+      brightness = ThemeData.estimateBrightnessForColor(dominantColor);
+      if (brightness == Brightness.dark) {
+        invertColor = Colors.white;
+      } else {
+        invertColor = Colors.black;
+      }
 
-        print('Dominant color $dominantColor ');
-      });
-    }, onError: (e) => debugPrint(e));
+      titleStyle = TextStyle(
+          fontFamily: 'Black',
+          color: invertColor,
+          letterSpacing: padding,
+          fontSize: 16.0);
+
+      print('Dominant color $dominantColor ');
+      setState(() {});
+    });
   }
 }
 
