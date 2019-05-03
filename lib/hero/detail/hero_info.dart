@@ -44,7 +44,7 @@ class DetailHeroInfo extends StatelessWidget {
                 child: Text(
                   '     ${state.hero.description}',
                   style: TextStyle(
-                    fontSize: 32 * queryData.textScaleFactor,
+                    fontSize: 24 * queryData.textScaleFactor,
                     color: titleColor,
                   ),
                   textAlign: TextAlign.center,

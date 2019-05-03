@@ -27,7 +27,8 @@ class MyApp extends StatelessWidget {
     );
     const bgColor = const Color(0xFFefefef);
     return new MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Marvel Heroes',
       theme: new ThemeData(
           fontFamily: 'Marvel',
           backgroundColor: bgColor,
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
 //          primarySwatch: Colors.redAccent,
           textTheme: TextTheme(title: titleTheme),
           primaryTextTheme: TextTheme(headline: headLineTheme)),
-      home: new MyHomePage(title: 'Flutter Demo Home Page'),
+      home: new MyHomePage(title: 'Marvel Heroes'),
     );
   }
 }
@@ -312,7 +313,7 @@ class _HeroTileState extends State<HeroTile> {
   Widget _buildPage(List<MarvelHero> heroes) {
     List<dynamic> items = List.from(heroes);
 
-    items.insert(3, "ASdadasd asd asd asd");
+//    items.insert(3, "ASdadasd asd asd asd");
 
     return OrientationBuilder(builder: (context, orientation) {
       final length = items.length;
