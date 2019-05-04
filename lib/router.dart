@@ -14,8 +14,9 @@ class Router {
   Router(this.context);
 
   void navigateToHero(MarvelHero hero) async {
-
+    AdMobHelper().hideBanner();
     AdMobHelper().showBetweenPagesIfNeeded();
+
     if (true) {
       // Without warm pallete
       Navigator.push(context,

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:marvel_heroes/AdMobHelper.dart';
@@ -31,8 +33,13 @@ class MyApp extends StatelessWidget {
       fontWeight: FontWeight.normal,
     );
     const bgColor = const Color(0xFFefefef);
+
+    FirebaseAnalytics analytics = FirebaseAnalytics();
+
     return new MaterialApp(
-      debugShowCheckedModeBanner: false,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       title: 'Marvel Heroes',
       theme: new ThemeData(
           fontFamily: 'Marvel',
