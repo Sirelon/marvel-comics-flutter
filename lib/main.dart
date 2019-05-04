@@ -90,7 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    AdMobHelper().showBanner(this);
     _appBarTitle = new Text(widget.title);
     _filter.addListener(_onSearchChanged);
     fetchFuture = fetchHeroes(0);
@@ -120,6 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    AdMobHelper().showBanner(this);
+
     return new Scaffold(
         appBar: AppBar(
           title: _appBarTitle,

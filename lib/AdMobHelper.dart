@@ -100,7 +100,7 @@ class AdMobHelper {
 
   void showBetweenPagesIfNeeded() {
     _counter++;
-    if (_counter % 5 == 0) {
+    if (_counter % 7 == 0) {
       showBetweenPages();
     }
   }
