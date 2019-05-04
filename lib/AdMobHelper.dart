@@ -4,6 +4,12 @@ import 'package:flutter/widgets.dart';
 class AdMobHelper {
   static final AdMobHelper _instance = new AdMobHelper._internal();
 
+  static const bannerId = "ca-app-pub-7516059448019339/9429144878";
+  static const interestingId = "ca-app-pub-7516059448019339/7211843947";
+
+//  static String interestingId = InterstitialAd.testAdUnitId;
+//  static String bannerId = BannerAd.testAdUnitId;
+
   factory AdMobHelper() {
     return _instance;
   }
@@ -48,7 +54,7 @@ class AdMobHelper {
   InterstitialAd _createInterstitialAd() {
     // Replace
     return InterstitialAd(
-      adUnitId: InterstitialAd.testAdUnitId,
+      adUnitId: interestingId,
       targetingInfo: _targetingInfo,
       listener: (MobileAdEvent event) {
         print("InterstitialAd event is $event");
@@ -87,7 +93,7 @@ class AdMobHelper {
       // Replace the testAdUnitId with an ad unit id from the AdMob dash.
       // https://developers.google.com/admob/android/test-ads
       // https://developers.google.com/admob/ios/test-ads
-      adUnitId: BannerAd.testAdUnitId,
+      adUnitId: bannerId,
       size: AdSize.smartBanner,
       targetingInfo: _targetingInfo,
       listener: (MobileAdEvent event) {
