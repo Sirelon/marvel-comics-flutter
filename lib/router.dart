@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
+import 'package:marvel_heroes/AdMobHelper.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/hero/detail/detail.dart';
 import 'package:marvel_heroes/widgets/loading_widgets.dart';
@@ -13,6 +14,8 @@ class Router {
   Router(this.context);
 
   void navigateToHero(MarvelHero hero) async {
+
+    AdMobHelper().showBetweenPagesIfNeeded();
     if (true) {
       // Without warm pallete
       Navigator.push(context,

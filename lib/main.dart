@@ -1,15 +1,20 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:marvel_heroes/AdMobHelper.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/router.dart';
 import 'package:marvel_heroes/widgets/loading_widgets.dart';
+
 import 'network.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  AdMobHelper().init();
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -78,6 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    AdMobHelper().showBanner(this);
     _appBarTitle = new Text(widget.title);
     _filter.addListener(_onSearchChanged);
     fetchFuture = fetchHeroes(0);
@@ -99,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    AdMobHelper().hideBanner();
     _filter.removeListener(_onSearchChanged);
     _filter.dispose();
     super.dispose();
