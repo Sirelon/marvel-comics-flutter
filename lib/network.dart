@@ -1,8 +1,9 @@
 import 'dart:convert';
+
 import 'package:convert/convert.dart';
-import 'package:marvel_heroes/entities.dart';
-import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:http/http.dart' as http;
+import 'package:marvel_heroes/entities.dart';
 
 // TODO Should be moved to some security place
 String _baseUrl = "https://gateway.marvel.com:443/v1/public";
@@ -41,7 +42,7 @@ Future<List<MarvelHero>> fetchHeroesWithFilters(
   var url = "$_baseUrl/characters?$queryParameters&$limitAndOffset&$orderQuery";
 
   if (search != null && search.isNotEmpty) {
-    final searchQuery = "nameStartsWith=$search";
+    final searchQuery = "nameStartsWith=${search.trim()}";
     url += "&$searchQuery";
   }
 

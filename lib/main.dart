@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_debounce?.isActive ?? false) _debounce.cancel();
     var searchText = _filter.value.text;
     if (searchText == _lastSearchTxt) return;
-    _debounce = Timer(const Duration(milliseconds: 700), () {
+    _debounce = Timer(const Duration(seconds: 2), () {
       print("Listner for search input $searchText");
       var state = initialFilterState.copy(newSearchQuery: searchText);
       stateCallback(state);
@@ -396,13 +396,12 @@ class _HeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var router = Router(context);
     return Card(
         elevation: 2.0,
         margin: EdgeInsets.all(8.0),
         child: InkWell(
             splashColor: Theme.of(context).accentColor,
-            onTap: () => router.navigateToHero(hero),
+            onTap: () => Router(context).navigateToHero(hero),
             child: Column(
               children: <Widget>[
                 CachedNetworkImage(
