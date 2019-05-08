@@ -47,26 +47,37 @@ class _FiltersPanelState extends State<FiltersPanel> {
 
     final orderItems = orderMap.entries
         .map((entry) => DropdownMenuItem(
-        child: Text("Filter ${entry.value}"), value: entry.key))
+              child: Text(
+                "Filter ${entry.value}",
+                style: TextStyle(color: Color(0xFFef5350)),
+              ),
+              value: entry.key,
+            ))
         .toList();
 
-    return DropdownButton(
-        items: orderItems,
-        value: choosedOrder,
-        onChanged: (value) {
-          var newState = filterState.copy(newOrder: value);
-          stateCallback(newState);
-          setState(() {
-            choosedOrder = value;
-          });
-        });
+    return Container(
+        color: Colors.white54,
+        child: DropdownButtonHideUnderline(
+            child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton(
+                    items: orderItems,
+                    style: TextStyle(color: Colors.white),
+                    value: choosedOrder,
+                    onChanged: (value) {
+                      var newState = filterState.copy(newOrder: value);
+                      stateCallback(newState);
+                      setState(() {
+                        choosedOrder = value;
+                      });
+                    }))));
   }
 
   void _showSordedOptions() async {
     final orderItems = orderMap.entries
         .map((entry) => SimpleDialogOption(
-        child: Text(entry.value, textScaleFactor: 2.0),
-        onPressed: () => Navigator.pop(context, entry)))
+            child: Text(entry.value, textScaleFactor: 2.0),
+            onPressed: () => Navigator.pop(context, entry)))
         .toList();
 
     MapEntry<Order, String> value = await showDialog(

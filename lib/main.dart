@@ -9,6 +9,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:marvel_heroes/FiltersPanel.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/router.dart';
+import 'package:marvel_heroes/widgets/Copyright.dart';
 import 'package:marvel_heroes/widgets/loading_widgets.dart';
 
 import 'network.dart';
@@ -89,12 +90,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    _appBarTitle = new Text(widget.title);
-    _filter.addListener(_onSearchChanged);
-    fetchFuture = fetchHeroes(0);
     initialFilterState =
         FilterState(order: Order.MODIFIED_ASK, searchQuery: "");
+    _appBarTitle = createAppBarWidget();
+    _filter.addListener(_onSearchChanged);
+    fetchFuture = fetchHeroes(0);
+
     super.initState();
+  }
+
+  Row createAppBarWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        new Text(widget.title),
+        FiltersPanel(
+          state: initialFilterState,
+          stateCallback: stateCallback,
+        ),
+      ],
+    );
   }
 
   void _onSearchChanged() {
@@ -125,14 +140,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         body: Column(children: <Widget>[
-          Text(
-            "Data provided by Marvel. © 2014 Marvel",
-            style: Theme.of(context).primaryTextTheme.headline,
-          ),
-          FiltersPanel(
-            state: initialFilterState,
-            stateCallback: stateCallback,
-          ),
           Expanded(
               child: FutureBuilder(
                   future: fetchFuture,
@@ -150,7 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             heroes: snapshot.data,
                             filterState: initialFilterState);
                     }
-                  }))
+                  })),
+          Copyright(),
         ]));
   }
 
@@ -175,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text(widget.title);
+        this._appBarTitle = createAppBarWidget();
         _filter.clear();
       }
     });
