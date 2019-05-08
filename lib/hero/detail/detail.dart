@@ -8,6 +8,7 @@ import 'package:marvel_heroes/hero/detail/hero_image.dart';
 import 'package:marvel_heroes/hero/detail/comics_list.dart';
 import 'package:marvel_heroes/hero/detail/hero_info.dart';
 import 'package:marvel_heroes/entities.dart';
+import 'package:marvel_heroes/widgets/Copyright.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:random_color/random_color.dart';
 
@@ -117,10 +118,16 @@ class _HeroScreen extends StatelessWidget {
           brightness: state.brightness,
           iconTheme: iconAppBarTheme,
         ),
-        body: PageView(
-          controller: state._pageController,
-          scrollDirection: Axis.vertical,
-          children: pages,
+        body: Column(
+          children: <Widget>[
+            Expanded(
+                child: PageView(
+              controller: state._pageController,
+              scrollDirection: Axis.vertical,
+              children: pages,
+            )),
+            Copyright()
+          ],
         ));
   }
 }
