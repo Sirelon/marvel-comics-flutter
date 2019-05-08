@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:http/http.dart' as http;
+import 'package:marvel_heroes/FiltersPanel.dart';
 import 'package:marvel_heroes/entities.dart';
 
 // TODO Should be moved to some security place
@@ -98,5 +99,3 @@ generateMd5(String data) {
   var digest = md5.convert(content);
   return hex.encode(digest.bytes);
 }
-
-enum Order { NAME_ASK, NAME_DESC, MODIFIED_ASK, MODIFIED_DESC }

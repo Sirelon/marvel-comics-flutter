@@ -6,6 +6,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:marvel_heroes/FiltersPanel.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/router.dart';
 import 'package:marvel_heroes/widgets/loading_widgets.dart';
@@ -124,28 +125,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         body: Column(children: <Widget>[
-          Card(
-            child: ExpansionPanelList(
-              expansionCallback: (int index, bool isExpanded) {
-                setState(() {
-                  this._isExpanded = !isExpanded;
-                });
-              },
-              children: <ExpansionPanel>[
-                ExpansionPanel(
-                    isExpanded: this._isExpanded,
-                    headerBuilder: (context, isExpand) => Center(
-                            child: Text(
-                          "Filters",
-                          style: Theme.of(context).primaryTextTheme.headline,
-                        )),
-                    body: FiltersPanel(
-                      state: initialFilterState,
-                      stateCallback: stateCallback,
-                    ))
-              ],
-            ),
-            margin: EdgeInsets.all(0.0),
+          Text(
+            "Data provided by Marvel. © 2014 Marvel",
+            style: Theme.of(context).primaryTextTheme.headline,
+          ),
+          FiltersPanel(
+            state: initialFilterState,
+            stateCallback: stateCallback,
           ),
           Expanded(
               child: FutureBuilder(
@@ -193,103 +179,6 @@ class _MyHomePageState extends State<MyHomePage> {
         _filter.clear();
       }
     });
-  }
-}
-
-typedef void FilterStateChanged(FilterState newState);
-
-class FiltersPanel extends StatefulWidget {
-  final FilterState state;
-  final FilterStateChanged stateCallback;
-
-  FiltersPanel({Key key, this.state, this.stateCallback}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() =>
-      _FiltersPanelState(state, stateCallback);
-}
-
-class _FiltersPanelState extends State<FiltersPanel> {
-  Map<Order, String> orderMap;
-  Order choosedOrder;
-  FilterStateChanged stateCallback;
-  FilterState filterState;
-
-  _FiltersPanelState(FilterState state, FilterStateChanged stateCallback) {
-    this.filterState = state;
-    this.stateCallback = stateCallback;
-  }
-
-  @override
-  void initState() {
-    orderMap = {
-      Order.NAME_ASK: "By name ask",
-      Order.NAME_DESC: "By name desc",
-      Order.MODIFIED_ASK: "By modified date ask",
-      Order.MODIFIED_DESC: "By modified date desc"
-    };
-    choosedOrder = filterState.order;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FlatButton.icon(
-        onPressed: _showSordedOptions,
-        icon: Icon(Icons.sort),
-        label: Text(orderMap[choosedOrder], textScaleFactor: 1.3));
-
-    final orderItems = orderMap.entries
-        .map((entry) =>
-            DropdownMenuItem(child: Text(entry.value), value: entry.key))
-        .toList();
-
-    return DropdownButton(
-        items: orderItems,
-        value: choosedOrder,
-        onChanged: (value) {
-          var newState = filterState.copy(newOrder: value);
-          stateCallback(newState);
-          setState(() {
-            choosedOrder = value;
-          });
-        });
-  }
-
-  void _showSordedOptions() async {
-    final orderItems = orderMap.entries
-        .map((entry) => SimpleDialogOption(
-            child: Text(entry.value, textScaleFactor: 2.0),
-            onPressed: () => Navigator.pop(context, entry)))
-        .toList();
-
-    MapEntry<Order, String> value = await showDialog(
-        context: context, builder: (con) => SimpleDialog(children: orderItems));
-    if (value == null) return;
-
-    print("Show Sorted Options" + value.toString());
-    var newState = filterState.copy(newOrder: value.key);
-    stateCallback(newState);
-    setState(() {
-      choosedOrder = value.key;
-    });
-  }
-}
-
-class FilterState {
-  final Order order;
-  final String searchQuery;
-
-  FilterState({this.order, this.searchQuery});
-
-  FilterState copy({Order newOrder, String newSearchQuery}) {
-    return FilterState(
-        order: newOrder ?? order, searchQuery: newSearchQuery ?? searchQuery);
-  }
-
-  @override
-  String toString() {
-    return 'FilterState{order: $order, searchQuery: $searchQuery}';
   }
 }
 
