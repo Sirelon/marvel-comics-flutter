@@ -6,7 +6,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:marvel_heroes/AdMobHelper.dart';
 import 'package:marvel_heroes/entities.dart';
 import 'package:marvel_heroes/router.dart';
 import 'package:marvel_heroes/widgets/loading_widgets.dart';
@@ -14,7 +13,6 @@ import 'package:marvel_heroes/widgets/loading_widgets.dart';
 import 'network.dart';
 
 void main() {
-  AdMobHelper().init();
   runApp(new MyApp());
 }
 
@@ -111,7 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    AdMobHelper().hideBanner();
     _filter.removeListener(_onSearchChanged);
     _filter.dispose();
     super.dispose();
@@ -119,8 +116,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    AdMobHelper().showBanner(this);
-
     return new Scaffold(
         appBar: AppBar(
           title: _appBarTitle,
